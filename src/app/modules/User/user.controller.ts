@@ -46,13 +46,14 @@ const getUsers = catchAsync(async (req: Request, res: Response) => {
 
 // *! update user role and account status
 const updateUser = catchAsync(async (req: Request, res: Response) => {
-  const isMe = req.user.id === req.params.id;
+  const userId = req.params.id;
+  const isMe = req.user.id === userId;
+
   if (isMe) {
     throw new ApiError(409, "admin cannot update his role and status");
   }
 
-  const id = req.params.id;
-  const result = await userService.updateUserIntoDb(req.body, id);
+  const result = await userService.updateUserIntoDb(req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
