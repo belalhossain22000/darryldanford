@@ -124,34 +124,34 @@ const getUsersFromDb = async (
 };
 
 // update profile
-const updateProfile = async (user: IUser, payload: IUser) => {
-  const userInfo = await prisma.user.findUnique({
-    where: {
-      email: user.email,
-      id: user.id,
-    },
-  });
+// const updateProfile = async (user: IUser, payload: IUser) => {
+//   const userInfo = await prisma.user.findUnique({
+//     where: {
+//       email: user.email,
+//       id: user.id,
+//     },
+//   });
 
-  if (!userInfo) {
-    throw new ApiError(404, "User not found");
-  }
+//   if (!userInfo) {
+//     throw new ApiError(404, "User not found");
+//   }
 
-  // Update the user profile with the new information
-  const updatedUser = await prisma.user.update({
-    where: {
-      email: userInfo.email,
-    },
-    data: payload,
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      status: true,
-    },
-  });
+//   // Update the user profile with the new information
+//   const updatedUser = await prisma.user.update({
+//     where: {
+//       email: userInfo.email,
+//     },
+//     data: payload,
+//     select: {
+//       id: true,
+//       email: true,
+//       role: true,
+//       status: true,
+//     },
+//   });
 
-  return updatedUser;
-};
+//   return updatedUser;
+// };
 
 const updateUserIntoDb = async (payload: IUser, id: string) => {
   const userInfo = await prisma.user.findUnique({
@@ -187,6 +187,6 @@ const updateUserIntoDb = async (payload: IUser, id: string) => {
 export const userService = {
   createUserIntoDb,
   getUsersFromDb,
-  updateProfile,
+  // updateProfile,
   updateUserIntoDb,
 };
