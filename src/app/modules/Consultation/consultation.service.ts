@@ -1,9 +1,13 @@
-import { ConsultationService } from "@prisma/client";
+import { ConsultationService, Prisma } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import ApiError from "../../errors/ApiErrors";
 import httpStatus from "http-status";
 import { Request } from "express";
 import config from "../../../config";
+import { IUserFilterRequest } from "../User/user.interface";
+import { IPaginationOptions } from "../../interfaces/paginations";
+import { userSearchAbleFields } from "../User/user.costant";
+import { paginationHelper } from "../../../helpars/paginationHelper";
 
 // create consultation
 const createConsultation = async (req: Request) => {
@@ -49,15 +53,115 @@ const createConsultation = async (req: Request) => {
 };
 
 // get all consultations
-const getConsultations = () => {
-  console.log("payload");
+const getConsultations = async (
+  params: IUserFilterRequest,
+  options: IPaginationOptions
+) => {
+  const { page, limit, skip } = paginationHelper.calculatePagination(options);
+  const { searchTerm, ...filterData } = params;
+
+  const andCondions: Prisma.UserWhereInput[] = [];
+
+  if (params.searchTerm) {
+    andCondions.push({
+      OR: userSearchAbleFields.map((field) => ({
+        [field]: {
+          contains: params.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andCondions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const result = await prisma.consultationService.findMany({
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy]: options.sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
+  });
+  const total = await prisma.consultationService.count({});
+
+  if (!result || result.length === 0) {
+    throw new ApiError(404, "No active consultations found");
+  }
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
-const getConsultationById = (id: string) => {
-  console.log(id);
+
+// get consultation by id
+const getConsultationById = async (id: string) => {
+  const result = await prisma.consultationService.findUnique({
+    where: { id: id },
+  });
+
+  if (!result) {
+    throw new ApiError(404, "Consultation not found");
+  }
+
+  return result;
 };
-const updateConsultation = (payload: ConsultationService) => {
-  console.log(payload);
+
+// update consultation by id
+const updateConsultationIntoDB = async (id: string, payload: any) => {
+  const consultation = await getConsultationById(id);
+
+  if (!consultation) {
+    throw new ApiError(404, "Consultation not found");
+  }
+
+  const updatedConsultation = await prisma.consultationService.update({
+    where: { id: id },
+    data: payload,
+  });
+
+  if (!updatedConsultation) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Failed to update consultation"
+    );
+  }
+
+  return updatedConsultation;
 };
+
+// delete consultation by id
+const deleteConsultationIntoDB = async (id: string) => {
+  const consultation = await getConsultationById(id);
+
+  if (!consultation) {
+    throw new ApiError(404, "Consultation not found");
+  }
+  await prisma.consultationService.delete({
+    where: { id: id },
+  });
+
+  return;
+};
+
 export const ConsultationServices = {
   createConsultation,
+  getConsultations,
+  getConsultationById,
+  updateConsultationIntoDB,
+  deleteConsultationIntoDB,
 };
