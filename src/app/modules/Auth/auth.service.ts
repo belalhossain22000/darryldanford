@@ -5,7 +5,6 @@ import prisma from "../../../shared/prisma";
 import * as bcrypt from "bcrypt";
 import ApiError from "../../errors/ApiErrors";
 import emailSender from "./emailSender";
-import { UserStatus } from "@prisma/client";
 import httpStatus from "http-status";
 
 // user login
@@ -63,11 +62,9 @@ const getMyProfile = async (userToken: string) => {
     select: {
       id: true,
       email: true,
-      firstName: true,
-      lastName: true,
+     
       isDeleted: true,
-      profession: true,
-      promoCode: true,
+    
       status: true,
       role: true,
       createdAt: true,
@@ -138,7 +135,7 @@ const forgotPassword = async (payload: { email: string }) => {
     userData.email,
     `
      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <p>Dear ${userData.firstName},</p>
+          <p>Dear ${userData.email},</p>
           
           <p>We received a request to reset your password. Click the button below to reset your password:</p>
           

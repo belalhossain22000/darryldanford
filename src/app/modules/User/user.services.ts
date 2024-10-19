@@ -7,10 +7,10 @@ import { paginationHelper } from "../../../helpars/paginationHelper";
 import { Prisma, UserRole, UserStatus } from "@prisma/client";
 import { userSearchAbleFields } from "./user.costant";
 import config from "../../../config";
+import httpStatus from "http-status";
 
 // Create a new user in the database.
 const createUserIntoDb = async (payload: any) => {
-  // Check if user with the same email or username already exists
   const existingUser = await prisma.user.findFirst({
     where: {
       email: payload.email,
@@ -30,10 +30,15 @@ const createUserIntoDb = async (payload: any) => {
   );
 
   const result = await prisma.user.create({
-    data: payload,
+    data: { ...payload, pasword: hashedPassword },
   });
 
-  // const { password, ...userWithoutPassword } = result;
+  if (!result) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "insternal server error user not created"
+    );
+  }
 
   return result;
 };
@@ -84,10 +89,6 @@ const getUsersFromDb = async (
     select: {
       id: true,
       email: true,
-      firstName: true,
-      lastName: true,
-      profession: true,
-
       role: true,
       status: true,
       createdAt: true,
@@ -129,13 +130,9 @@ const updateProfile = async (user: IUser, payload: IUser) => {
     where: {
       email: userInfo.email,
     },
-    data:payload,
+    data: payload,
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
-      profession: true,
-  
       email: true,
       role: true,
       status: true,
