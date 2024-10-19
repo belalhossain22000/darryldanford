@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { ConsultationServices } from "./consultation.service";
 
 const createConsultation = catchAsync(async (req: Request, res: Response) => {
-  const result = await ConsultationServices.createConsultation(req.body);
+  const result = await ConsultationServices.createConsultation(req);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
