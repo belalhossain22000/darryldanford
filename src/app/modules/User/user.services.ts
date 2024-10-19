@@ -154,22 +154,30 @@ const updateProfile = async (user: IUser, payload: IUser) => {
 };
 
 const updateUserIntoDb = async (payload: IUser, id: string) => {
-  // Retrieve the existing user info
-  const userInfo = await prisma.user.findUniqueOrThrow({
+  const userInfo = await prisma.user.findUnique({
     where: {
       id: id,
     },
   });
 
+  if (!userInfo) {
+    throw new ApiError(404, "User not found");
+  }
+
   // Update the user with the provided payload
   const result = await prisma.user.update({
     where: {
-      id: userInfo.id,
+      id: id,
     },
     data: {
-      status: payload.status || userInfo.status,
-      role: payload.role || userInfo.role,
-      updatedAt: new Date(),
+      status: payload.status,
+      role: payload.role,
+    },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
     },
   });
 
