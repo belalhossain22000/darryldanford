@@ -30,8 +30,19 @@ const createUserIntoDb = async (payload: any) => {
   );
 
   const result = await prisma.user.create({
-    data: { ...payload, pasword: hashedPassword },
+    data: { ...payload, password: hashedPassword },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      isDeleted: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
+
+  console.log(result);
 
   if (!result) {
     throw new ApiError(
