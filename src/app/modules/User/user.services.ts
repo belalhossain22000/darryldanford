@@ -42,7 +42,6 @@ const createUserIntoDb = async (payload: any) => {
     },
   });
 
-  console.log(result);
 
   if (!result) {
     throw new ApiError(
