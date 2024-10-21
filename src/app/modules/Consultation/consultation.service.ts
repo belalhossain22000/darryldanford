@@ -8,6 +8,7 @@ import { IUserFilterRequest } from "../User/user.interface";
 import { IPaginationOptions } from "../../interfaces/paginations";
 import { userSearchAbleFields } from "../User/user.costant";
 import { paginationHelper } from "../../../helpars/paginationHelper";
+import { consultationSearchAbleFields } from "./consultations.constant";
 
 // create consultation
 const createConsultation = async (req: Request) => {
@@ -53,18 +54,15 @@ const createConsultation = async (req: Request) => {
 };
 
 // get all consultations
-const getConsultations = async (
-  params: IUserFilterRequest,
-  options: IPaginationOptions
-) => {
+const getConsultations = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, ...filterData } = params;
 
-  const andCondions: Prisma.UserWhereInput[] = [];
+  const andCondions: Prisma.ConsultationServiceWhereInput[] = [];
 
   if (params.searchTerm) {
     andCondions.push({
-      OR: userSearchAbleFields.map((field) => ({
+      OR: consultationSearchAbleFields.map((field) => ({
         [field]: {
           contains: params.searchTerm,
           mode: "insensitive",
@@ -82,8 +80,14 @@ const getConsultations = async (
       })),
     });
   }
+  const whereConditons: Prisma.ConsultationServiceWhereInput = {
+    AND: andCondions.length > 0 ? andCondions : undefined,
+  };
 
   const result = await prisma.consultationService.findMany({
+    where: whereConditons,
+    take: limit,
+    skip,
     orderBy:
       options.sortBy && options.sortOrder
         ? {
@@ -151,11 +155,11 @@ const deleteConsultationIntoDB = async (id: string) => {
   if (!consultation) {
     throw new ApiError(404, "Consultation not found");
   }
-  await prisma.consultationService.delete({
+  const result = await prisma.consultationService.delete({
     where: { id: id },
   });
 
-  return;
+  return result;
 };
 
 export const ConsultationServices = {

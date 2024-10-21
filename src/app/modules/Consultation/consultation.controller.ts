@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import { ConsultationServices } from "./consultation.service";
 import { userFilterableFields } from "../User/user.costant";
 import pick from "../../../shared/pick";
+import { consultationFilterableFields } from "./consultations.constant";
 
 const createConsultation = catchAsync(async (req: Request, res: Response) => {
   const result = await ConsultationServices.createConsultation(req);
@@ -17,7 +18,7 @@ const createConsultation = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getConsultations = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, userFilterableFields);
+  const filters = pick(req.query, consultationFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
   const result = await ConsultationServices.getConsultations(filters, options);
   sendResponse(res, {

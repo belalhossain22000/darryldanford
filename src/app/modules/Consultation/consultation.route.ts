@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  auth("ADMIN"),
+  // auth("ADMIN"),
   fileUploader.uploadSingle,
   ConsultationsController.createConsultation
 );
@@ -19,7 +19,7 @@ router.put("/:id", auth("ADMIN"), ConsultationsController.updateConsultation);
 
 router.delete(
   "/:id",
-  auth("ADMIN"),
+  // auth("ADMIN"),
   ConsultationsController.deleteConsultation
 );
 

@@ -42,7 +42,6 @@ const createUserIntoDb = async (payload: any) => {
     },
   });
 
-
   if (!result) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -63,7 +62,6 @@ const getUsersFromDb = async (
 
   const andCondions: Prisma.UserWhereInput[] = [];
 
-  //console.log(filterData);
   if (params.searchTerm) {
     andCondions.push({
       OR: userSearchAbleFields.map((field) => ({
@@ -88,6 +86,7 @@ const getUsersFromDb = async (
 
   const result = await prisma.user.findMany({
     where: whereConditons,
+    skip,
     orderBy:
       options.sortBy && options.sortOrder
         ? {
