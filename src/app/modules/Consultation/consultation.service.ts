@@ -49,8 +49,9 @@ const createConsultation = async (req: Request) => {
 };
 
 // get all consultations
-const getConsultations = () => {
-  console.log("payload");
+const getConsultations = async () => {
+  const result = await prisma.consultationService.findMany({});
+  return result;
 };
 const getConsultationById = (id: string) => {
   console.log(id);
@@ -60,4 +61,5 @@ const updateConsultation = (payload: ConsultationService) => {
 };
 export const ConsultationServices = {
   createConsultation,
+  getConsultations
 };

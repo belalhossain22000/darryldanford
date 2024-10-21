@@ -9,4 +9,7 @@ router.post(
   ConsultationsController.createConsultation
 );
 
+// get all consultations
+router.post("/", ConsultationsController.getConsultations);
+
 export const ConsultationRoutes = router;

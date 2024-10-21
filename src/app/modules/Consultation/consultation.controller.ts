@@ -13,7 +13,17 @@ const createConsultation = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getConsultations = catchAsync(async (req: Request, res: Response) => {
+  const result = await ConsultationServices.getConsultations();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Consultation retriev successfully",
+    data: result,
+  });
+});
 
 export const ConsultationsController = {
   createConsultation,
+  getConsultations,
 };
