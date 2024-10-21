@@ -123,11 +123,39 @@ const getUsersFromDb = async (
 };
 
 // update profile
-const updateProfile = async (user: IUser, payload: IUser) => {
+// const updateProfile = async (user: IUser, payload: IUser) => {
+//   const userInfo = await prisma.user.findUnique({
+//     where: {
+//       email: user.email,
+//       id: user.id,
+//     },
+//   });
+
+//   if (!userInfo) {
+//     throw new ApiError(404, "User not found");
+//   }
+
+//   // Update the user profile with the new information
+//   const updatedUser = await prisma.user.update({
+//     where: {
+//       email: userInfo.email,
+//     },
+//     data: payload,
+//     select: {
+//       id: true,
+//       email: true,
+//       role: true,
+//       status: true,
+//     },
+//   });
+
+//   return updatedUser;
+// };
+
+const updateUserIntoDb = async (payload: IUser, id: string) => {
   const userInfo = await prisma.user.findUnique({
     where: {
-      email: user.email,
-      id: user.id,
+      id: id,
     },
   });
 
@@ -135,40 +163,20 @@ const updateProfile = async (user: IUser, payload: IUser) => {
     throw new ApiError(404, "User not found");
   }
 
-  // Update the user profile with the new information
-  const updatedUser = await prisma.user.update({
+  // Update the user with the provided payload
+  const result = await prisma.user.update({
     where: {
-      email: userInfo.email,
+      id: id,
     },
-    data: payload,
+    data: {
+      status: payload.status,
+      role: payload.role,
+    },
     select: {
       id: true,
       email: true,
       role: true,
       status: true,
-    },
-  });
-
-  return updatedUser;
-};
-
-const updateUserIntoDb = async (payload: IUser, id: string) => {
-  // Retrieve the existing user info
-  const userInfo = await prisma.user.findUniqueOrThrow({
-    where: {
-      id: id,
-    },
-  });
-
-  // Update the user with the provided payload
-  const result = await prisma.user.update({
-    where: {
-      id: userInfo.id,
-    },
-    data: {
-      status: payload.status || userInfo.status,
-      role: payload.role || userInfo.role,
-      updatedAt: new Date(),
     },
   });
 
@@ -178,6 +186,6 @@ const updateUserIntoDb = async (payload: IUser, id: string) => {
 export const userService = {
   createUserIntoDb,
   getUsersFromDb,
-  updateProfile,
+  // updateProfile,
   updateUserIntoDb,
 };

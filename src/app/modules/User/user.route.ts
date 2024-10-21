@@ -16,13 +16,13 @@ router.post(
 // *!get all  user
 router.get("/", userController.getUsers);
 
-// *!profile user
-router.put(
-  "/profile",
-  validateRequest(UserValidation.userUpdateSchema),
-  auth(UserRole.ADMIN, UserRole.USER),
-  userController.updateProfile
-);
+// // *!profile user
+// router.put(
+//   "/profile",
+//   validateRequest(UserValidation.userUpdateSchema),
+//   auth(UserRole.ADMIN, UserRole.USER),
+//   userController.updateProfile
+// );
 
 // *!update  user
 router.put("/:id", auth(UserRole.ADMIN), userController.updateUser);
