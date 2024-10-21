@@ -42,8 +42,7 @@ const getConsultationById = catchAsync(async (req: Request, res: Response) => {
 
 const updateConsultation = catchAsync(async (req: Request, res: Response) => {
   const result = await ConsultationServices.updateConsultationIntoDB(
-    req.params.id,
-    req.body
+   req
   );
 
   sendResponse(res, {

@@ -126,7 +126,28 @@ const getConsultationById = async (id: string) => {
 };
 
 // update consultation by id
-const updateConsultationIntoDB = async (id: string, payload: any) => {
+const updateConsultationIntoDB = async (req: Request) => {
+  const id = req.params.id;
+  const file = req.file;
+  if (!file || !file.originalname) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "File is required for consultation image"
+    );
+  }
+  const image = `${config.backend_base_url}/uploads/${file?.originalname}`;
+
+  if (!req.body.body) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid request body");
+  }
+  let consultationData;
+  try {
+    consultationData = JSON.parse(req.body.body);
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid JSON in request body");
+  }
+  const payload = { ...consultationData, image };
+
   const consultation = await getConsultationById(id);
 
   if (!consultation) {
@@ -158,6 +179,12 @@ const deleteConsultationIntoDB = async (id: string) => {
   const result = await prisma.consultationService.delete({
     where: { id: id },
   });
+  if (!result) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Failed to delete consultation"
+    );
+  }
 
   return result;
 };

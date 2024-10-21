@@ -15,7 +15,12 @@ router.get("/", ConsultationsController.getConsultations);
 
 router.get("/:id", ConsultationsController.getConsultationById);
 
-router.put("/:id", auth("ADMIN"), ConsultationsController.updateConsultation);
+router.put(
+  "/:id",
+  //  auth("ADMIN"),
+  fileUploader.uploadSingle,
+  ConsultationsController.updateConsultation
+);
 
 router.delete(
   "/:id",
