@@ -27,7 +27,7 @@ async function main() {
 
   const restartServer = () => {
     console.info("Restarting server...");
-    main();
+    // main();
   };
 
   process.on("uncaughtException", (error) => {
