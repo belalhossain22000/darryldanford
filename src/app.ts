@@ -7,15 +7,20 @@ import GlobalErrorHandler from "./app/middlewares/globalErrorHandler";
 import router from "./app/routes";
 import path from "path";
 
-
 const app: Application = express();
+// export const corsOptions = {
+//   origin: ["http://localhost:3001", "http://localhost:3000","https://darryldanfords.vercel.app"],
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true,
+// };
+
 export const corsOptions = {
-  origin: ["http://localhost:3001", "http://localhost:3000"],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
-
 // Middleware setup
 app.use(cors(corsOptions));
 app.use(cookieParser());
