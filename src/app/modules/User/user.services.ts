@@ -171,12 +171,7 @@ const updateUserIntoDb = async (payload: IUser, id: string) => {
       status: payload.status,
       role: payload.role,
     },
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      status: true,
-    },
+  
   });
 
   return result;

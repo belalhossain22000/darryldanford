@@ -69,6 +69,7 @@ const getAllReviewsFromDb = async (params: any, options: any) => {
 
   const result = await prisma.review.findMany({
     where: whereConditions,
+    take: limit,
     skip,
     orderBy:
       options.sortBy && options.sortOrder
