@@ -47,6 +47,23 @@ model Schedule {
   @@map("Schedules")
 }
 
+model Review {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  image       String?
+  name        String
+  designation String?
+  comment     String
+  status      ReviewStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum ScheduleStatus {
   PENDING
   CONFIRMED
