@@ -3,6 +3,8 @@ import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { Request, Response } from "express";
 import { ReviewService } from "./review.service";
+import { reviewFilterableFields } from "./review.constant";
+import pick from "../../../shared/pick";
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewService.createReviewIntoDb(req);
@@ -14,7 +16,9 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getAllReview = catchAsync(async (req: Request, res: Response) => {
-  const result = await ReviewService.getAllReviewsFromDb();
+  const filters = pick(req.query, reviewFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const result = await ReviewService.getAllReviewsFromDb(filters, options);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -34,6 +38,7 @@ const getSingleReview = catchAsync(async (req: Request, res: Response) => {
 });
 const updateReview = catchAsync(async (req: Request, res: Response) => {
   const reviewId = req.params.reviewId;
+  
   const result = await ReviewService.updateReview(reviewId, req);
   sendResponse(res, {
     statusCode: httpStatus.OK,

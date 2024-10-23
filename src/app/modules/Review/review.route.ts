@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.post(
   "/",
-  //   validateRequest(ReviewValidationSchema.reviewSchema),
   fileUploader.uploadSingle,
+  // validateRequest(ReviewValidationSchema.reviewSchema),
   ReviewController.createReview
 );
 
@@ -17,7 +17,11 @@ router.get("/", ReviewController.getAllReview);
 
 router.get("/:reviewId", ReviewController.getSingleReview);
 
-router.put("/:reviewId", ReviewController.updateReview);
+router.put(
+  "/:reviewId",
+  fileUploader.uploadSingle,
+  ReviewController.updateReview
+);
 
 router.delete("/:reviewId", ReviewController.deleteReview);
 
