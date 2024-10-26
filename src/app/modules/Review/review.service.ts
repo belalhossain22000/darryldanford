@@ -114,15 +114,7 @@ const getSingleReview = async (reviewId: any) => {
 
 const updateReview = async (reviewId: any, req: Request) => {
   const file = req.file;
-  // if (!file || !file.originalname) {
-  //   throw new ApiError(
-  //     httpStatus.BAD_REQUEST,
-  //     "File is required for profile image"
-  //   );
-  // }
 
-
-  const image = `${config.backend_base_url}/uploads/${file?.originalname}`;
 
   if (!req.body.body) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Requered request body");
@@ -133,7 +125,27 @@ const updateReview = async (reviewId: any, req: Request) => {
   } catch (error) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid JSON in request body");
   }
-  const payload = { ...reviewData, image };
+
+  const isReviewExist = await prisma.review.findUnique({
+    where: {
+      id: reviewId,
+    },
+  });
+
+  if (!isReviewExist) {
+    throw new ApiError(404, "Review not found ");
+  }
+
+  let image;
+  if (file && file.originalname) {
+    image = `${config.backend_base_url}/uploads/${file?.originalname}`;
+  }
+
+  if (image) {
+    reviewData.image = image;
+  }
+
+  const payload = { ...reviewData };
   const result = await prisma.review.update({
     where: {
       id: reviewId,
@@ -156,12 +168,6 @@ const deleteReview = async (reviewId: any) => {
       id: reviewId,
     },
   });
-  if (!result) {
-    throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      "Failed to delete Review"
-    );
-  }
   return result;
 };
 

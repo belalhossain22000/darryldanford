@@ -17,9 +17,9 @@ const app: Application = express();
 
 export const corsOptions = {
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  // methods: ["GET", "POST", "PUT", "DELETE"],
+  // allowedHeaders: ["Content-Type", "Authorization"],
+  // credentials: true,
 };
 // Middleware setup
 app.use(cors(corsOptions));
