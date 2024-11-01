@@ -40,9 +40,6 @@ const loginUser = async (payload: { email: string; password: string }) => {
   );
 
   const result = {
-    id: userData.id,
-    email: userData.email,
-    role: userData.role,
     token: accessToken,
   };
   return result;
@@ -62,9 +59,9 @@ const getMyProfile = async (userToken: string) => {
     select: {
       id: true,
       email: true,
-     
+
       isDeleted: true,
-    
+
       status: true,
       role: true,
       createdAt: true,
